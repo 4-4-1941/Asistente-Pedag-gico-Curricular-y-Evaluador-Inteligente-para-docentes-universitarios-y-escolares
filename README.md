@@ -1,4 +1,4 @@
-# AsistentAsistente Pedagógico Curricular y Evaluador Inteligente
+Asistente Pedagógico Curricular y Evaluador Inteligente
 
 © SIP - SYSTEM INTELLIGENCE PLATFORM 2026
 
