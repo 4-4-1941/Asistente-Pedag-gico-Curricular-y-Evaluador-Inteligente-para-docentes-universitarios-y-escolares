@@ -1,577 +1,354 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Asistente Pedagógico - Docente</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <style>
-        /* Transiciones para el sidebar */
-        .sidebar {
-            transition: transform 0.3s ease;
-        }
-        .sidebar-closed {
-            transform: translateX(-100%);
-        }
-        @media (min-width: 768px) {
-            .sidebar-closed {
-                transform: translateX(0);
-            }
-        }
-        /* Estilos para el temporizador */
-        .timer-warning {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduMentor AI - Asistente Docente</title>
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#111827;
+      --card:#1f2937;
+      --muted:#94a3b8;
+      --text:#e5e7eb;
+      --accent:#38bdf8;
+      --accent2:#22c55e;
+      --warning:#f59e0b;
+      --danger:#ef4444;
+      --border:rgba(255,255,255,.08);
+      --shadow:0 10px 30px rgba(0,0,0,.25);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,Segoe UI,Arial,sans-serif;
+      background:linear-gradient(180deg,#020617 0%, #0f172a 100%);
+      color:var(--text);
+    }
+    .app{
+      display:grid;
+      grid-template-columns:280px 1fr;
+      min-height:100vh;
+    }
+    .sidebar{
+      background:rgba(15,23,42,.95);
+      border-right:1px solid var(--border);
+      padding:24px;
+      position:sticky;
+      top:0;
+      height:100vh;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:28px;
+    }
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:grid;place-items:center;
+      color:#001018;font-weight:800;
+      box-shadow:var(--shadow);
+    }
+    .brand h1{font-size:18px;margin:0}
+    .brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
+    .nav{
+      display:grid;
+      gap:10px;
+      margin-top:18px;
+    }
+    .nav a{
+      text-decoration:none;
+      color:var(--text);
+      padding:12px 14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(255,255,255,.02);
+    }
+    .nav a:hover{border-color:rgba(56,189,248,.4)}
+    .main{
+      padding:24px;
+    }
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      margin-bottom:22px;
+      flex-wrap:wrap;
+    }
+    .title h2{margin:0;font-size:28px}
+    .title p{margin:6px 0 0;color:var(--muted)}
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      border:0;
+      border-radius:12px;
+      padding:12px 16px;
+      font-weight:600;
+      color:#fff;
+      cursor:pointer;
+      background:var(--card);
+      box-shadow:var(--shadow);
+    }
+    .btn.primary{background:linear-gradient(135deg,var(--accent),#2563eb)}
+    .btn.success{background:linear-gradient(135deg,var(--accent2),#16a34a)}
+    .grid{
+      display:grid;
+      gap:18px;
+    }
+    .stats{
+      grid-template-columns:repeat(4,minmax(0,1fr));
+    }
+    .card{
+      background:rgba(31,41,55,.9);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+    .stat .label{color:var(--muted);font-size:13px}
+    .stat .value{font-size:28px;font-weight:800;margin-top:8px}
+    .stat .note{margin-top:8px;font-size:12px;color:var(--muted)}
+    .content{
+      grid-template-columns:1.4fr .9fr;
+      margin-top:18px;
+    }
+    .section-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:12px;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .section-title h3{margin:0;font-size:18px}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:rgba(56,189,248,.12);
+      color:#7dd3fc;
+      border:1px solid rgba(56,189,248,.25);
+      font-size:12px;
+    }
+    .list{
+      display:grid;
+      gap:12px;
+    }
+    .item{
+      padding:14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--border);
+    }
+    .item strong{display:block;margin-bottom:5px}
+    .item small{color:var(--muted)}
+    .progress{
+      height:10px;
+      background:#0b1220;
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:10px;
+    }
+    .bar{
+      height:100%;
+      width:72%;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+    }
+    .module{
+      display:grid;
+      gap:14px;
+    }
+    .module .row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:12px 0;
+      border-bottom:1px solid var(--border);
+    }
+    .module .row:last-child{border-bottom:0}
+    .kpi{font-weight:700}
+    .footer{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    @media (max-width: 1100px){
+      .app{grid-template-columns:1fr}
+      .sidebar{position:relative;height:auto}
+      .stats,.content{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
-
-    <!-- Contenedor principal -->
-    <div id="app" class="min-h-screen bg-gray-50 flex flex-col md:flex-row">
-
-        <!-- SIDEBAR -->
-        <aside id="sidebar" class="sidebar bg-indigo-800 text-white w-full md:w-64 md:min-h-screen flex-shrink-0 p-4 space-y-4">
-            <div class="flex items-center space-x-2 text-2xl font-bold mb-6">
-                <i class="fas fa-graduation-cap"></i>
-                <span>EduAssist</span>
-            </div>
-            <nav class="space-y-2">
-                <a href="#" data-page="dashboard" class="nav-link block py-2 px-3 rounded hover:bg-indigo-700 flex items-center space-x-2">
-                    <i class="fas fa-tachometer-alt w-5"></i><span>Dashboard</span>
-                </a>
-                <a href="#" data-page="materiales" class="nav-link block py-2 px-3 rounded hover:bg-indigo-700 flex items-center space-x-2">
-                    <i class="fas fa-file-alt w-5"></i><span>Materiales</span>
-                </a>
-                <a href="#" data-page="preguntas" class="nav-link block py-2 px-3 rounded hover:bg-indigo-700 flex items-center space-x-2">
-                    <i class="fas fa-question-circle w-5"></i><span>Preguntas</span>
-                </a>
-                <a href="#" data-page="examenes" class="nav-link block py-2 px-3 rounded hover:bg-indigo-700 flex items-center space-x-2">
-                    <i class="fas fa-pencil-alt w-5"></i><span>Exámenes</span>
-                </a>
-                <a href="#" data-page="resultados" class="nav-link block py-2 px-3 rounded hover:bg-indigo-700 flex items-center space-x-2">
-                    <i class="fas fa-chart-bar w-5"></i><span>Resultados</span>
-                </a>
-            </nav>
-            <div class="pt-8 border-t border-indigo-600">
-                <button id="logoutBtn" class="w-full text-left py-2 px-3 rounded hover:bg-indigo-700 flex items-center space-x-2">
-                    <i class="fas fa-sign-out-alt w-5"></i><span>Cerrar sesión</span>
-                </button>
-            </div>
-        </aside>
-
-        <!-- CONTENIDO PRINCIPAL -->
-        <main class="flex-1 p-6 md:p-8 overflow-y-auto">
-
-            <!-- HEADER -->
-            <header class="flex justify-between items-center mb-6">
-                <div class="flex items-center space-x-4">
-                    <button id="toggleSidebar" class="md:hidden text-gray-600 text-xl">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <h1 id="pageTitle" class="text-2xl font-bold text-gray-800">Dashboard</h1>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <span class="text-sm text-gray-600 hidden sm:inline">Bienvenido, <strong>Prof. Juan</strong></span>
-                    <div class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">PJ</div>
-                </div>
-            </header>
-
-            <!-- PÁGINAS (cada sección se muestra/oculta) -->
-            <div id="page-dashboard" class="page-content">
-                <!-- Dashboard -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white p-5 rounded-xl shadow flex items-center space-x-4">
-                        <div class="bg-indigo-100 p-3 rounded-full text-indigo-600"><i class="fas fa-file-alt text-2xl"></i></div>
-                        <div><p class="text-gray-500 text-sm">Materiales</p><p class="text-2xl font-bold">12</p></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow flex items-center space-x-4">
-                        <div class="bg-green-100 p-3 rounded-full text-green-600"><i class="fas fa-question-circle text-2xl"></i></div>
-                        <div><p class="text-gray-500 text-sm">Preguntas</p><p class="text-2xl font-bold">48</p></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow flex items-center space-x-4">
-                        <div class="bg-yellow-100 p-3 rounded-full text-yellow-600"><i class="fas fa-pencil-alt text-2xl"></i></div>
-                        <div><p class="text-gray-500 text-sm">Exámenes</p><p class="text-2xl font-bold">5</p></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow flex items-center space-x-4">
-                        <div class="bg-red-100 p-3 rounded-full text-red-600"><i class="fas fa-users text-2xl"></i></div>
-                        <div><p class="text-gray-500 text-sm">Alumnos</p><p class="text-2xl font-bold">32</p></div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl shadow">
-                    <h2 class="text-lg font-semibold mb-4">Actividad reciente</h2>
-                    <ul class="space-y-2 text-gray-700">
-                        <li><i class="fas fa-upload text-indigo-500 w-6"></i> Subiste "Sílabo_Matematica.pdf" hace 2h</li>
-                        <li><i class="fas fa-check-circle text-green-500 w-6"></i> Aprobaste 8 preguntas para el examen parcial</li>
-                        <li><i class="fas fa-users text-blue-500 w-6"></i> 3 alumnos completaron el examen de Física</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div id="page-materiales" class="page-content hidden">
-                <!-- Materiales -->
-                <div class="bg-white p-6 rounded-xl shadow mb-6">
-                    <h2 class="text-lg font-semibold mb-4">Subir nuevo material</h2>
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                        <input type="file" id="fileInput" accept=".pdf,.docx,.txt" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
-                        <button id="uploadBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg flex items-center gap-2">
-                            <i class="fas fa-cloud-upload-alt"></i> Subir y analizar
-                        </button>
-                    </div>
-                    <div id="uploadProgress" class="mt-4 hidden">
-                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                            <div id="progressBar" class="bg-indigo-600 h-2.5 rounded-full" style="width:0%"></div>
-                        </div>
-                        <p id="progressText" class="text-sm text-gray-600 mt-1">Procesando...</p>
-                    </div>
-                </div>
-
-                <!-- Resultado del análisis (simulado) -->
-                <div id="analisisResultado" class="bg-white p-6 rounded-xl shadow hidden">
-                    <h2 class="text-xl font-bold mb-3">Análisis del material</h2>
-                    <div class="mb-4">
-                        <h3 class="font-semibold text-indigo-700">Diagnóstico pedagógico</h3>
-                        <p class="text-gray-700">El material presenta una estructura lógica con objetivos claros, pero carece de actividades prácticas. Se recomienda incluir ejercicios de aplicación para reforzar el aprendizaje.</p>
-                    </div>
-                    <div class="mb-4">
-                        <h3 class="font-semibold text-indigo-700">Propuestas de mejora</h3>
-                        <p class="text-gray-700">Incorporar estudios de caso, preguntas de reflexión y rúbricas de autoevaluación. También se sugiere dividir los temas en subtemas más específicos para facilitar la comprensión.</p>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-indigo-700">Temas detectados</h3>
-                        <ul class="list-disc list-inside text-gray-700">
-                            <li><strong>Álgebra</strong>: ecuaciones lineales, sistemas de ecuaciones</li>
-                            <li><strong>Geometría</strong>: áreas y perímetros, teorema de Pitágoras</li>
-                            <li><strong>Estadística</strong>: media, mediana, moda</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div id="page-preguntas" class="page-content hidden">
-                <!-- Preguntas -->
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-semibold">Banco de preguntas</h2>
-                    <button id="generarPreguntasBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-                        <i class="fas fa-magic"></i> Generar preguntas
-                    </button>
-                </div>
-                <div id="preguntasList" class="space-y-4">
-                    <!-- Las preguntas se inyectarán con JS -->
-                </div>
-            </div>
-
-            <div id="page-examenes" class="page-content hidden">
-                <!-- Exámenes -->
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-semibold">Crear examen</h2>
-                    <button id="crearExamenBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-                        <i class="fas fa-plus-circle"></i> Nuevo examen
-                    </button>
-                </div>
-                <div id="examenContainer" class="bg-white p-6 rounded-xl shadow">
-                    <p class="text-gray-500">Selecciona preguntas aprobadas para armar el examen.</p>
-                    <!-- Aquí se mostrará el examen creado -->
-                </div>
-                <!-- Simulación de examen en curso -->
-                <div id="examenActivo" class="mt-6 bg-white p-6 rounded-xl shadow hidden">
-                    <h3 class="text-xl font-bold">Examen en progreso</h3>
-                    <p class="text-sm text-gray-600">Temporizador: <span id="timerDisplay" class="font-mono">10:00</span></p>
-                    <div id="preguntasExamen" class="mt-4 space-y-4"></div>
-                    <button id="entregarExamenBtn" class="mt-4 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg">Entregar examen</button>
-                </div>
-            </div>
-
-            <div id="page-resultados" class="page-content hidden">
-                <!-- Resultados -->
-                <h2 class="text-lg font-semibold mb-4">Reporte de resultados</h2>
-                <div class="bg-white rounded-xl shadow overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Alumno</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Curso</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nota</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Condición</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <tr><td class="px-6 py-4">María Gómez</td><td class="px-6 py-4">Matemáticas</td><td class="px-6 py-4">16</td><td class="px-6 py-4 text-green-600 font-semibold">Aprobado</td></tr>
-                            <tr><td class="px-6 py-4">Carlos Ruiz</td><td class="px-6 py-4">Matemáticas</td><td class="px-6 py-4">10</td><td class="px-6 py-4 text-red-600 font-semibold">Desaprobado</td></tr>
-                            <tr><td class="px-6 py-4">Ana Torres</td><td class="px-6 py-4">Física</td><td class="px-6 py-4">14</td><td class="px-6 py-4 text-green-600 font-semibold">Aprobado</td></tr>
-                            <tr><td class="px-6 py-4">Luis Fernández</td><td class="px-6 py-4">Física</td><td class="px-6 py-4">08</td><td class="px-6 py-4 text-red-600 font-semibold">Desaprobado</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="mt-4 grid grid-cols-2 gap-4">
-                    <div class="bg-white p-4 rounded-xl shadow text-center"><span class="text-gray-500">Promedio general</span><p class="text-2xl font-bold">12.8</p></div>
-                    <div class="bg-white p-4 rounded-xl shadow text-center"><span class="text-gray-500">Tasa de aprobación</span><p class="text-2xl font-bold">60%</p></div>
-                </div>
-            </div>
-
-        </main>
-    </div>
-
-    <!-- MODAL (para detalles o confirmaciones) -->
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-            <h3 id="modalTitle" class="text-lg font-bold mb-2">Título</h3>
-            <p id="modalBody" class="text-gray-700 mb-4">Contenido</p>
-            <div class="flex justify-end gap-2">
-                <button id="modalCancel" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancelar</button>
-                <button id="modalConfirm" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Confirmar</button>
-            </div>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">EA</div>
+        <div>
+          <h1>EduMentor AI</h1>
+          <p>Asistente docente curricular</p>
         </div>
-    </div>
+      </div>
 
-    <script>
-        // ===========================
-        // SIMULACIÓN DE DATOS Y LÓGICA
-        // ===========================
+      <div class="badge">Malla + Exámenes + Innovación</div>
 
-        // Estado global
-        const state = {
-            currentPage: 'dashboard',
-            preguntas: [
-                { id: 1, enunciado: '¿Cuál es la raíz cuadrada de 144?', alternativas: ['10', '11', '12', '13'], correcta: 2, nivel: 'fácil', competencia: 'Cálculo', aprobada: false },
-                { id: 2, enunciado: 'Resuelve: 2x + 5 = 15', alternativas: ['x=5', 'x=10', 'x=7', 'x=3'], correcta: 0, nivel: 'medio', competencia: 'Álgebra', aprobada: false },
-                { id: 3, enunciado: '¿Qué es la media aritmética?', alternativas: ['Suma de datos', 'Promedio', 'Mediana', 'Moda'], correcta: 1, nivel: 'fácil', competencia: 'Estadística', aprobada: false },
-            ],
-            examenActual: null,
-            timerInterval: null,
-        };
+      <nav class="nav">
+        <a href="#">Dashboard</a>
+        <a href="#">Cursos</a>
+        <a href="#">Malla curricular</a>
+        <a href="#">Material fuente</a>
+        <a href="#">Banco de preguntas</a>
+        <a href="#">Exámenes balotados</a>
+        <a href="#">Alumnos</a>
+        <a href="#">Resultados</a>
+        <a href="#">Mejora pedagógica</a>
+      </nav>
 
-        // Elementos DOM
-        const sidebar = document.getElementById('sidebar');
-        const toggleSidebar = document.getElementById('toggleSidebar');
-        const navLinks = document.querySelectorAll('.nav-link');
-        const pageTitle = document.getElementById('pageTitle');
-        const pageContents = {
-            dashboard: document.getElementById('page-dashboard'),
-            materiales: document.getElementById('page-materiales'),
-            preguntas: document.getElementById('page-preguntas'),
-            examenes: document.getElementById('page-examenes'),
-            resultados: document.getElementById('page-resultados'),
-        };
-        const modal = document.getElementById('modal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalBody = document.getElementById('modalBody');
-        const modalCancel = document.getElementById('modalCancel');
-        const modalConfirm = document.getElementById('modalConfirm');
+      <div class="footer">
+        Versión conceptual para GitHub / Next.js
+      </div>
+    </aside>
 
-        // Sidebar toggle (mobile)
-        toggleSidebar.addEventListener('click', () => {
-            sidebar.classList.toggle('sidebar-closed');
-        });
+    <main class="main">
+      <div class="topbar">
+        <div class="title">
+          <h2>Panel principal</h2>
+          <p>Gestión académica, evaluación y asistencia pedagógica.</p>
+        </div>
+        <div class="actions">
+          <button class="btn primary">Subir PDF</button>
+          <button class="btn">Generar preguntas</button>
+          <button class="btn success">Crear examen</button>
+        </div>
+      </div>
 
-        // Navegación
-        function navigateTo(page) {
-            // Ocultar todas
-            Object.values(pageContents).forEach(el => el.classList.add('hidden'));
-            // Mostrar la seleccionada
-            if (pageContents[page]) {
-                pageContents[page].classList.remove('hidden');
-                pageTitle.textContent = page.charAt(0).toUpperCase() + page.slice(1);
-                state.currentPage = page;
-                // Cerrar sidebar en móvil
-                if (window.innerWidth < 768) sidebar.classList.add('sidebar-closed');
-                // Actualizar link activo
-                navLinks.forEach(link => {
-                    link.classList.remove('bg-indigo-700');
-                    if (link.dataset.page === page) link.classList.add('bg-indigo-700');
-                });
-                // Cargar contenido dinámico según página
-                if (page === 'preguntas') renderPreguntas();
-                if (page === 'examenes') renderExamenes();
-            }
-        }
+      <section class="grid stats">
+        <div class="card stat">
+          <div class="label">Cursos activos</div>
+          <div class="value">12</div>
+          <div class="note">Docencia universitaria y escolar</div>
+        </div>
+        <div class="card stat">
+          <div class="label">Preguntas generadas</div>
+          <div class="value">248</div>
+          <div class="note">Pendientes de revisión docente</div>
+        </div>
+        <div class="card stat">
+          <div class="label">Exámenes creados</div>
+          <div class="value">36</div>
+          <div class="note">Tipos 1, 2 y 3 balotados</div>
+        </div>
+        <div class="card stat">
+          <div class="label">Aprobación promedio</div>
+          <div class="value">78%</div>
+          <div class="note">Alumnos aprobados</div>
+        </div>
+      </section>
 
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                navigateTo(link.dataset.page);
-            });
-        });
+      <section class="grid content">
+        <div class="card">
+          <div class="section-title">
+            <h3>Curso actual</h3>
+            <span class="badge">Psicología Educativa</span>
+          </div>
 
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            if (confirm('¿Cerrar sesión?')) {
-                // Simular logout: volver a login (página en blanco)
-                document.getElementById('app').innerHTML = `
-                    <div class="min-h-screen flex items-center justify-center bg-gray-100">
-                        <div class="bg-white p-8 rounded-xl shadow-lg w-96 text-center">
-                            <i class="fas fa-graduation-cap text-5xl text-indigo-600 mb-4"></i>
-                            <h2 class="text-2xl font-bold mb-2">EduAssist</h2>
-                            <p class="text-gray-600 mb-6">Asistente Pedagógico</p>
-                            <button id="loginBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg w-full">Iniciar sesión</button>
-                        </div>
-                    </div>
-                `;
-                document.getElementById('loginBtn').addEventListener('click', () => location.reload());
-            }
-        });
-// ========== MATERIALES: subida simulada ==========
-        document.getElementById('uploadBtn').addEventListener('click', () => {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            if (!file) {
-                alert('Selecciona un archivo primero.');
-                return;
-            }
-            const progressDiv = document.getElementById('uploadProgress');
-            const progressBar = document.getElementById('progressBar');
-            const progressText = document.getElementById('progressText');
-            progressDiv.classList.remove('hidden');
-            progressBar.style.width = '0%';
-            progressText.textContent = 'Subiendo archivo...';
+          <div class="list">
+            <div class="item">
+              <strong>Malla curricular</strong>
+              <small>Unidad 1: Bases conceptuales · Unidad 2: Estrategias pedagógicas · Unidad 3: Evaluación por competencias</small>
+            </div>
+            <div class="item">
+              <strong>Material fuente cargado</strong>
+              <small>PDF, sumilla, PPT, resumen de capítulo y objetivos de aprendizaje.</small>
+            </div>
+            <div class="item">
+              <strong>Motor de mejora pedagógica</strong>
+              <small>Sugiere metodología, innovación didáctica, actividades activas y alineación curricular.</small>
+            </div>
+            <div class="item">
+              <strong>Progreso de revisión docente</strong>
+              <div class="progress"><div class="bar"></div></div>
+              <small>72% aprobado por el docente antes de publicar.</small>
+            </div>
+          </div>
+        </div>
 
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 10;
-                if (progress > 100) {
-                    clearInterval(interval);
-                    progressText.textContent = 'Analizando contenido con IA...';
-                    setTimeout(() => {
-                        progressText.textContent = '¡Análisis completado!';
-                        document.getElementById('analisisResultado').classList.remove('hidden');
-                        // Simular que se agregan preguntas al banco (si no existen)
-                        if (state.preguntas.length < 6) {
-                            state.preguntas.push({
-                                id: Date.now(),
-                                enunciado: '¿Cuál es el resultado de 3x + 2 = 11?',
-                                alternativas: ['x=2', 'x=3', 'x=4', 'x=5'],
-                                correcta: 1,
-                                nivel: 'medio',
-                                competencia: 'Álgebra',
-                                aprobada: false
-                            });
-                            state.preguntas.push({
-                                id: Date.now() + 1,
-                                enunciado: 'Calcula el área de un triángulo de base 5 y altura 8.',
-                                alternativas: ['20', '30', '40', '50'],
-                                correcta: 0,
-                                nivel: 'fácil',
-                                competencia: 'Geometría',
-                                aprobada: false
-                            });
-                        }
-                        renderPreguntas();
-                    }, 1500);
-                    return;
-                }
-                progressBar.style.width = progress + '%';
-                if (progress > 30 && progress <= 60) progressText.textContent = 'Extrayendo texto...';
-                else if (progress > 60) progressText.textContent = 'Procesando...';
-            }, 200);
-        });
+        <div class="card">
+          <div class="section-title">
+            <h3>Resumen rápido</h3>
+            <span class="badge">En vivo</span>
+          </div>
 
-        // ========== PREGUNTAS ==========
-        function renderPreguntas() {
-            const container = document.getElementById('preguntasList');
-            if (!container) return;
-            if (state.preguntas.length === 0) {
-                container.innerHTML = '<p class="text-gray-500">No hay preguntas generadas. Usa el botón "Generar preguntas".</p>';
-                return;
-            }
-            container.innerHTML = state.preguntas.map(p => `
-                <div class="bg-white p-4 rounded-xl shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-                    <div class="flex-1">
-                        <p class="font-medium">${p.enunciado}</p>
-                        <div class="flex flex-wrap gap-2 text-sm text-gray-600 mt-1">
-                            <span class="bg-gray-100 px-2 py-0.5 rounded">${p.nivel}</span>
-                            <span class="bg-gray-100 px-2 py-0.5 rounded">${p.competencia}</span>
-                            <span class="${p.aprobada ? 'text-green-600' : 'text-yellow-600'}">
-                                ${p.aprobada ? '✔ Aprobada' : '⏳ Pendiente'}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button class="aprobarBtn text-green-600 hover:text-green-800 px-3 py-1 border border-green-300 rounded-lg text-sm" data-id="${p.id}">
-                            <i class="fas fa-check"></i> Aprobar
-                        </button>
-                        <button class="editarBtn text-blue-600 hover:text-blue-800 px-3 py-1 border border-blue-300 rounded-lg text-sm" data-id="${p.id}">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <button class="eliminarBtn text-red-600 hover:text-red-800 px-3 py-1 border border-red-300 rounded-lg text-sm" data-id="${p.id}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+          <div class="module">
+            <div class="row"><span>Preguntas en cola</span><span class="kpi">34</span></div>
+            <div class="row"><span>Versiones del examen</span><span class="kpi">3</span></div>
+            <div class="row"><span>Tiempo por examen</span><span class="kpi">45 min</span></div>
+            <div class="row"><span>Nota mínima aprobatoria</span><span class="kpi">11/20</span></div>
+            <div class="row"><span>Alumnos inscritos</span><span class="kpi">128</span></div>
+          </div>
+        </div>
+      </section>
 
-            // Eventos
-            document.querySelectorAll('.aprobarBtn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = Number(btn.dataset.id);
-                    const p = state.preguntas.find(q => q.id === id);
-                    if (p) {
-                        p.aprobada = !p.aprobada;
-                        renderPreguntas();
-                        // Notificación
-                        mostrarModal('Pregunta aprobada', 'La pregunta ha sido aprobada correctamente.', false);
-                    }
-                });
-            });
-            document.querySelectorAll('.eliminarBtn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = Number(btn.dataset.id);
-                    if (confirm('¿Eliminar esta pregunta?')) {
-                        state.preguntas = state.preguntas.filter(q => q.id !== id);
-                        renderPreguntas();
-                    }
-                });
-            });
-            document.querySelectorAll('.editarBtn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = Number(btn.dataset.id);
-                    const p = state.preguntas.find(q => q.id === id);
-                    if (p) {
-                        const nuevoEnunciado = prompt('Editar enunciado:', p.enunciado);
-                        if (nuevoEnunciado) {
-                            p.enunciado = nuevoEnunciado;
-                            renderPreguntas();
-                        }
-                    }
-                });
-            });
-        }
+      <section class="grid content" style="margin-top:18px;">
+        <div class="card">
+          <div class="section-title">
+            <h3>Flujo de trabajo</h3>
+            <span class="badge">Docente → IA → Revisión → Examen</span>
+          </div>
 
-        document.getElementById('generarPreguntasBtn').addEventListener('click', () => {
-            // Simular generación con IA
-            const nuevas = [
-                { id: Date.now(), enunciado: '¿Cuál es el valor de 7! ?', alternativas: ['5040', '40320', '720', '120'], correcta: 0, nivel: 'dificil', competencia: 'Cálculo', aprobada: false },
-                { id: Date.now() + 1, enunciado: 'En un conjunto de datos, ¿qué medida representa el valor central?', alternativas: ['Media', 'Mediana', 'Moda', 'Rango'], correcta: 1, nivel: 'medio', competencia: 'Estadística', aprobada: false },
-            ];
-            state.preguntas.push(...nuevas);
-            renderPreguntas();
-            mostrarModal('¡Preguntas generadas!', 'Se agregaron 2 nuevas preguntas al banco.', false);
-        });
+          <div class="list">
+            <div class="item">
+              <strong>1. Cargar contenido</strong>
+              <small>Subir PDF, pegar texto o importar capítulos y sumilla.</small>
+            </div>
+            <div class="item">
+              <strong>2. Analizar y proponer</strong>
+              <small>Detectar temas, objetivos, dificultad y coherencia curricular.</small>
+            </div>
+            <div class="item">
+              <strong>3. Aprobar preguntas</strong>
+              <small>El docente corrige, elimina o acepta antes de generar el examen.</small>
+            </div>
+            <div class="item">
+              <strong>4. Publicar examen</strong>
+              <small>Versiones aleatorias, tiempo límite y nota final automática.</small>
+            </div>
+          </div>
+        </div>
 
-        // ========== EXÁMENES ==========
-        function renderExamenes() {
-            const container = document.getElementById('examenContainer');
-            const aprobadas = state.preguntas.filter(p => p.aprobada);
-            if (aprobadas.length === 0) {
-                container.innerHTML = `<p class="text-gray-500">No hay preguntas aprobadas. Ve a la sección "Preguntas" y aprueba algunas.</p>`;
-                return;
-            }
-            container.innerHTML = `
-                <p class="mb-2"><strong>${aprobadas.length}</strong> preguntas aprobadas disponibles.</p>
-                <button id="armarExamenBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-                    <i class="fas fa-file-pdf"></i> Armar examen con todas
-                </button>
-                <div class="mt-4 text-sm text-gray-600">
-                    <span class="inline-block bg-green-100 px-2 py-1 rounded">Preguntas: ${aprobadas.map(p => p.enunciado.substring(0,20)+'...').join(', ')}</span>
-                </div>
-            `;
-            document.getElementById('armarExamenBtn').addEventListener('click', () => {
-                iniciarExamen(aprobadas);
-            });
-        }
+        <div class="card">
+          <div class="section-title">
+            <h3>Resultados</h3>
+            <span class="badge">Promedio final</span>
+          </div>
 
-        function iniciarExamen(preguntas) {
-            // Mezclar preguntas y alternativas (simulación)
-            const shuffled = [...preguntas].sort(() => Math.random() - 0.5);
-            state.examenActual = shuffled.map(p => ({
-                ...p,
-                alternativas: [...p.alternativas].sort(() => Math.random() - 0.5)
-            }));
-
-            const activo = document.getElementById('examenActivo');
-            activo.classList.remove('hidden');
-            const container = document.getElementById('preguntasExamen');
-            container.innerHTML = state.examenActual.map((p, idx) => `
-                <div class="border-b pb-3">
-                    <p class="font-medium">${idx+1}. ${p.enunciado}</p>
-                    <div class="ml-4 mt-1 space-y-1">
-                        ${p.alternativas.map((alt, i) => `
-                            <label class="block">
-                                <input type="radio" name="respuesta_${idx}" value="${i}" class="mr-2" />
-                                ${alt}
-                            </label>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-
-            // Temporizador 10 min
-            let segundos = 600;
-            const timerDisplay = document.getElementById('timerDisplay');
-            if (state.timerInterval) clearInterval(state.timerInterval);
-            state.timerInterval = setInterval(() => {
-                segundos--;
-                const minutos = Math.floor(segundos / 60);
-                const segs = segundos % 60;
-                timerDisplay.textContent = `${String(minutos).padStart(2, '0')}:${String(segs).padStart(2, '0')}`;
-                if (segundos <= 0) {
-                    clearInterval(state.timerInterval);
-                    alert('¡Tiempo agotado! El examen se entregará automáticamente.');
-                    entregarExamen();
-                }
-            }, 1000);
-
-            document.getElementById('entregarExamenBtn').addEventListener('click', entregarExamen);
-        }
-
-        function entregarExamen() {
-            if (state.timerInterval) clearInterval(state.timerInterval);
-            // Calcular nota simulada
-            const total = state.examenActual.length;
-            const correctas = Math.floor(Math.random() * (total + 1)); // simulación
-            const nota = Math.round((correctas / total) * 20);
-            const condicion = nota >= 11 ? 'Aprobado' : 'Desaprobado';
-            mostrarModal('Examen entregado', `Respuestas correctas: ${correctas}/${total} | Nota: ${nota}/20 | ${condicion}`, false);
-            document.getElementById('examenActivo').classList.add('hidden');
-            state.examenActual = null;
-            // Redirigir a resultados
-            navigateTo('resultados');
-        }
-
-        document.getElementById('crearExamenBtn').addEventListener('click', () => {
-            navigateTo('examenes');
-        });
-
-        // ========== MODAL ==========
-        function mostrarModal(titulo, mensaje, confirmable = false) {
-            modalTitle.textContent = titulo;
-            modalBody.textContent = mensaje;
-            modal.classList.remove('hidden');
-            if (confirmable) {
-                modalConfirm.style.display = 'inline-block';
-                modalCancel.textContent = 'Cancelar';
-            } else {
-                modalConfirm.style.display = 'none';
-                modalCancel.textContent = 'Cerrar';
-            }
-        }
-
-        modalCancel.addEventListener('click', () => modal.classList.add('hidden'));
-        modalConfirm.addEventListener('click', () => {
-            modal.classList.add('hidden');
-            // Acción confirmada
-        });
-        // Cerrar modal al hacer clic fuera
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.classList.add('hidden');
-        });
-
-        // ========== INICIO ==========
-        // Página por defecto: dashboard
-        navigateTo('dashboard');
-
-        // Simular algunas preguntas aprobadas iniciales
-        setTimeout(() => {
-            if (state.preguntas.length >= 2) {
-                state.preguntas[0].aprobada = true;
-                state.preguntas[1].aprobada = true;
-                renderPreguntas();
-            }
-        }, 500);
-    </script>
-
+          <div class="list">
+            <div class="item">
+              <strong>Examen tipo 1</strong>
+              <small>Nota promedio: 14.2 · Aprobados: 81%</small>
+            </div>
+            <div class="item">
+              <strong>Examen tipo 2</strong>
+              <small>Nota promedio: 13.7 · Aprobados: 76%</small>
+            </div>
+            <div class="item">
+              <strong>Examen tipo 3</strong>
+              <small>Nota promedio: 15.1 · Aprobados: 84%</small>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 </body>
 </html>
