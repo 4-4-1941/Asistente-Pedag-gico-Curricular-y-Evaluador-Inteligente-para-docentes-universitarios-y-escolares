@@ -1,1 +1,1105 @@
+<!DOCTYPE html><html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SIP - System Intelligence Platform. Asistente Pedagógico Curricular y Evaluador Inteligente para docentes universitarios y escolares.">
+  <title>SIP | Asistente Pedagógico Curricular</title>  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --primary: #173b6c;
+      --primary-2: #245b9e;
+      --accent: #0ea5a4;
+      --accent-soft: #e6fffb;
+      --text: #172033;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --success: #15803d;
+      --shadow: 0 8px 25px rgba(15, 23, 42, .08);
+      --radius: 16px;
+    }
 
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+      background: var(--primary);
+      color: #fff;
+      min-height: 100vh;
+      padding: 22px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 4px 8px 22px;
+      border-bottom: 1px solid rgba(255,255,255,.14);
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      background: linear-gradient(135deg, #20c4b8, #69d5ff);
+      color: #07304b;
+    }
+
+    .brand h1 {
+      font-size: 17px;
+      margin: 0;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: #cbd5e1;
+      font-size: 11px;
+    }
+
+    .platform {
+      margin: 18px 8px;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.08);
+      color: #dbeafe;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .nav {
+      display: grid;
+      gap: 5px;
+    }
+
+    .nav button {
+      width: 100%;
+      text-align: left;
+      border: 0;
+      background: transparent;
+      color: #dbeafe;
+      padding: 11px 12px;
+      border-radius: 10px;
+      transition: .2s;
+    }
+
+    .nav button:hover,
+    .nav button.active {
+      background: rgba(255,255,255,.12);
+      color: #fff;
+    }
+
+    .nav-section {
+      color: #93c5fd;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: 10px;
+      padding: 18px 12px 6px;
+    }
+
+    .sidebar-footer {
+      margin-top: 30px;
+      padding: 12px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      color: #94a3b8;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    /* MAIN */
+
+    .main {
+      min-width: 0;
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .topbar h2 {
+      margin: 5px 0 4px;
+      font-size: 28px;
+    }
+
+    .topbar p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    /* HERO */
+
+    .hero {
+      background: linear-gradient(135deg, #173b6c, #245b9e);
+      color: white;
+      border-radius: 22px;
+      padding: 26px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 0;
+      color: #dbeafe;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .btn.light {
+      background: rgba(255,255,255,.12);
+      border-color: rgba(255,255,255,.25);
+      color: white;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    /* QUICK ACTIONS */
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin: 24px 0 12px;
+    }
+
+    .section-title h3 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .action-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      transition: .2s;
+    }
+
+    .action-card:hover {
+      transform: translateY(-2px);
+      border-color: #bfd3ea;
+    }
+
+    .action-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .action-card h4 {
+      margin: 0 0 6px;
+      font-size: 15px;
+    }
+
+    .action-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 12px;
+    }
+
+    /* GRID */
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.35fr .65fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    /* COURSE */
+
+    .course-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .course-head h3 {
+      margin: 0 0 5px;
+      font-size: 18px;
+    }
+
+    .course-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .badge {
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: #ecfdf5;
+      color: var(--success);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .course-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .course-item {
+      border: 1px solid var(--border);
+      background: var(--surface-soft);
+      padding: 13px;
+      border-radius: 12px;
+    }
+
+    .course-item strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .course-item span {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    /* DIAGNOSTIC */
+
+    .metric {
+      margin-bottom: 16px;
+    }
+
+    .metric:last-child {
+      margin-bottom: 0;
+    }
+
+    .metric-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    .metric-top span:last-child {
+      font-weight: 800;
+    }
+
+    .progress {
+      height: 8px;
+      background: #e8edf4;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), #35b8e5);
+      border-radius: inherit;
+      transition: width .6s ease;
+    }
+
+    .alert {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 11px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    /* WORKFLOW */
+
+    .workflow {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .step {
+      position: relative;
+      padding: 13px 9px;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .step small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    /* KPIS */
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .kpi-label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .kpi-value {
+      margin-top: 7px;
+      font-size: 25px;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .kpi-note {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    /* MODULE PLACEHOLDERS */
+
+    .modules {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .module {
+      padding: 16px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      background: #fbfdff;
+    }
+
+    .module h4 {
+      margin: 0 0 7px;
+      font-size: 13px;
+    }
+
+    .module p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .coming {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 5px 7px;
+      border-radius: 7px;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    /* FOOTER */
+
+    footer {
+      margin-top: 28px;
+      padding: 18px 4px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 10px;
+      text-align: center;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 1150px) {
+      .actions-grid,
+      .modules {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .workflow {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+        min-height: auto;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .kpis {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .main {
+        padding: 14px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .topbar h2 {
+        font-size: 23px;
+      }
+
+      .hero {
+        padding: 20px;
+      }
+
+      .actions-grid,
+      .modules,
+      .kpis,
+      .workflow {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+      }
+
+      .course-head {
+        flex-direction: column;
+      }
+    }
+  </style></head><body><div class="app">  <!-- SIDEBAR -->  <aside class="sidebar"><div class="brand">
+  <div class="logo">SIP</div>
+  <div>
+    <h1>System Intelligence Platform</h1>
+    <p>Asistente Pedagógico Curricular</p>
+  </div>
+</div>
+
+<div class="platform">
+  <strong>Modo docente</strong><br>
+  Asistencia curricular, pedagógica y evaluación inteligente.
+</div>
+
+<nav class="nav">
+
+  <div class="nav-section">Principal</div>
+
+  <button class="active" onclick="selectModule('dashboard', this)">
+    Dashboard
+  </button>
+
+  <button onclick="selectModule('cursos', this)">
+    Cursos
+  </button>
+
+  <button onclick="selectModule('curriculo', this)">
+    Currículo
+  </button>
+
+  <div class="nav-section">Contenido</div>
+
+  <button onclick="selectModule('materiales', this)">
+    Material fuente
+  </button>
+
+  <button onclick="selectModule('analisis', this)">
+    Análisis pedagógico
+  </button>
+
+  <div class="nav-section">Evaluación</div>
+
+  <button onclick="selectModule('preguntas', this)">
+    Banco de preguntas
+  </button>
+
+  <button onclick="selectModule('examenes', this)">
+    Exámenes
+  </button>
+
+  <button onclick="selectModule('alumnos', this)">
+    Alumnos
+  </button>
+
+  <button onclick="selectModule('resultados', this)">
+    Resultados
+  </button>
+
+  <div class="nav-section">Mejora</div>
+
+  <button onclick="selectModule('innovacion', this)">
+    Innovación didáctica
+  </button>
+
+</nav>
+
+<div class="sidebar-footer">
+  Arquitectura preparada para evolución modular.<br><br>
+  © SIP - SYSTEM INTELLIGENCE PLATFORM 2026
+</div>
+
+  </aside>  <!-- MAIN -->  <main class="main"><header class="topbar">
+
+  <div>
+    <div class="eyebrow">SIP · Sistema de Inteligencia Educativa</div>
+    <h2>Panel pedagógico</h2>
+    <p>
+      Del material académico al análisis curricular, evaluación y mejora del aprendizaje.
+    </p>
+  </div>
+
+  <div class="status">
+    <span class="dot"></span>
+    Plataforma operativa · modo demostración
+  </div>
+
+</header>
+
+
+<!-- HERO -->
+
+<section class="hero">
+
+  <h3>¿Qué desea hacer el docente?</h3>
+
+  <p>
+    SIP integra análisis curricular, asistencia pedagógica y evaluación inteligente.
+    El docente conserva el control sobre la revisión y aprobación de los contenidos
+    generados por el sistema.
+  </p>
+
+  <div class="hero-actions">
+
+    <button class="btn primary" onclick="notify('Módulo de carga de material preparado para implementación.')">
+      Analizar material
+    </button>
+
+    <button class="btn light" onclick="notify('Módulo curricular preparado para implementación.')">
+      Analizar currículo
+    </button>
+
+    <button class="btn light" onclick="notify('Banco de preguntas preparado para implementación.')">
+      Crear preguntas
+    </button>
+
+    <button class="btn light" onclick="notify('Constructor de exámenes preparado para implementación.')">
+      Crear examen
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- QUICK ACTIONS -->
+
+<div class="section-title">
+  <h3>Acciones principales</h3>
+  <span>Flujo docente</span>
+</div>
+
+<section class="actions-grid">
+
+  <article class="action-card" onclick="notify('Carga y análisis de material: próximo módulo.')">
+    <div class="action-icon">01</div>
+    <h4>Analizar material</h4>
+    <p>
+      PDF, PPT, Word, texto, capítulos, sílabos y otros recursos académicos.
+    </p>
+  </article>
+
+  <article class="action-card" onclick="notify('Análisis curricular: próximo módulo.')">
+    <div class="action-icon">02</div>
+    <h4>Analizar currículo</h4>
+    <p>
+      Competencias, resultados de aprendizaje, unidades, temas y alineación.
+    </p>
+  </article>
+
+  <article class="action-card" onclick="notify('Banco de preguntas: próximo módulo.')">
+    <div class="action-icon">03</div>
+    <h4>Banco de preguntas</h4>
+    <p>
+      Preguntas trazables, niveles cognitivos, dificultad y revisión docente.
+    </p>
+  </article>
+
+  <article class="action-card" onclick="notify('Revisión docente: próximo módulo.')">
+    <div class="action-icon">04</div>
+    <h4>Revisar preguntas</h4>
+    <p>
+      Corregir, aprobar, rechazar o regenerar antes de publicar.
+    </p>
+  </article>
+
+  <article class="action-card" onclick="notify('Constructor de exámenes: próximo módulo.')">
+    <div class="action-icon">05</div>
+    <h4>Crear examen</h4>
+    <p>
+      Versiones A/B/C/D, aleatorización, tiempo, puntaje y configuración.
+    </p>
+  </article>
+
+  <article class="action-card" onclick="notify('Analítica educativa: próximo módulo.')">
+    <div class="action-icon">06</div>
+    <h4>Analizar resultados</h4>
+    <p>
+      Rendimiento por alumno, pregunta, unidad, competencia y resultado.
+    </p>
+  </article>
+
+</section>
+
+
+<!-- COURSE + DIAGNOSTIC -->
+
+<section class="dashboard-grid">
+
+  <div class="card">
+
+    <div class="course-head">
+
+      <div>
+        <h3>Curso activo</h3>
+        <p>Ejemplo demostrativo · no representa datos reales</p>
+      </div>
+
+      <span class="badge">En configuración</span>
+
+    </div>
+
+    <div class="course-list">
+
+      <div class="course-item">
+        <strong>Psicología Educativa</strong>
+        <span>
+          Curso de demostración para mostrar la futura estructura de trabajo.
+        </span>
+      </div>
+
+      <div class="course-item">
+        <strong>Unidad 1 · Bases conceptuales</strong>
+        <span>
+          Competencias, conceptos fundamentales y resultados de aprendizaje.
+        </span>
+      </div>
+
+      <div class="course-item">
+        <strong>Unidad 2 · Estrategias pedagógicas</strong>
+        <span>
+          Metodologías activas, intervención y diseño de actividades.
+        </span>
+      </div>
+
+      <div class="course-item">
+        <strong>Unidad 3 · Evaluación por competencias</strong>
+        <span>
+          Evidencias, instrumentos, evaluación formativa y resultados.
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="course-head">
+
+      <div>
+        <h3>Diagnóstico curricular</h3>
+        <p>Ejemplo visual</p>
+      </div>
+
+    </div>
+
+    <div class="metric">
+
+      <div class="metric-top">
+        <span>Cobertura temática</span>
+        <span>84%</span>
+      </div>
+
+      <div class="progress">
+        <div class="progress-bar" style="width:84%"></div>
+      </div>
+
+    </div>
+
+    <div class="metric">
+
+      <div class="metric-top">
+        <span>Alineación curricular</span>
+        <span>78%</span>
+      </div>
+
+      <div class="progress">
+        <div class="progress-bar" style="width:78%"></div>
+      </div>
+
+    </div>
+
+    <div class="metric">
+
+      <div class="metric-top">
+        <span>Distribución cognitiva</span>
+        <span>71%</span>
+      </div>
+
+      <div class="progress">
+        <div class="progress-bar" style="width:71%"></div>
+      </div>
+
+    </div>
+
+    <div class="alert">
+      <strong>Observación pedagógica:</strong><br>
+      Los indicadores mostrados son demostrativos. En la implementación real
+      serán calculados a partir del material y currículo proporcionados por el docente.
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- WORKFLOW -->
+
+<div class="section-title">
+  <h3>Flujo pedagógico del sistema</h3>
+  <span>Arquitectura funcional proyectada</span>
+</div>
+
+<section class="workflow">
+
+  <div class="step">
+    01
+    <small>Material</small>
+  </div>
+
+  <div class="step">
+    02
+    <small>Análisis</small>
+  </div>
+
+  <div class="step">
+    03
+    <small>Currículo</small>
+  </div>
+
+  <div class="step">
+    04
+    <small>Preguntas</small>
+  </div>
+
+  <div class="step">
+    05
+    <small>Revisión docente</small>
+  </div>
+
+  <div class="step">
+    06
+    <small>Examen y resultados</small>
+  </div>
+
+</section>
+
+
+<!-- KPIS -->
+
+<section class="kpis">
+
+  <div class="kpi">
+    <div class="kpi-label">Cursos</div>
+    <div class="kpi-value">—</div>
+    <div class="kpi-note">Se conectará a la base de datos</div>
+  </div>
+
+  <div class="kpi">
+    <div class="kpi-label">Preguntas aprobadas</div>
+    <div class="kpi-value">—</div>
+    <div class="kpi-note">No se muestran datos ficticios</div>
+  </div>
+
+  <div class="kpi">
+    <div class="kpi-label">Exámenes</div>
+    <div class="kpi-value">—</div>
+    <div class="kpi-note">Módulo pendiente de conexión</div>
+  </div>
+
+  <div class="kpi">
+    <div class="kpi-label">Resultados</div>
+    <div class="kpi-value">—</div>
+    <div class="kpi-note">Analítica futura</div>
+  </div>
+
+</section>
+
+
+<!-- FUTURE MODULES -->
+
+    <div class="section-title">
+      <h3>Módulos de evolución</h3>
+      <span>Preparados para integración progresiva</span>
+    </div>
+
+    <section class="modules">
+
+      <article class="module">
+        <h4>Materiales</h4>
+        <p>
+          Ingesta de documentos y extracción estructurada del contenido académico.
+        </p>
+        <span class="coming">Próxima implementación</span>
+      </article>
+
+      <article class="module">
+        <h4>Matriz curricular</h4>
+        <p>
+          Competencia → resultado → contenido → actividad → evidencia → evaluación.
+        </p>
+        <span class="coming">Próxima implementación</span>
+      </article>
+
+      <article class="module">
+        <h4>IA pedagógica</h4>
+        <p>
+          Análisis, recomendaciones y generación supervisada por el docente.
+        </p>
+        <span class="coming">Próxima implementación</span>
+      </article>
+
+      <article class="module">
+        <h4>Banco de preguntas</h4>
+        <p>
+          Preguntas trazables con dificultad, nivel cognitivo y estado de aprobación.
+        </p>
+        <span class="coming">Próxima implementación</span>
+      </article>
+
+      <article class="module">
+        <h4>Exámenes balotados</h4>
+        <p>
+          Versiones equivalentes con orden de preguntas y alternativas aleatorizado.
+        </p>
+        <span class="coming">Próxima implementación</span>
+      </article>
+
+      <article class="module">
+        <h4>Analítica educativa</h4>
+        <p>
+          Resultados por alumno, competencia, unidad, pregunta y resultado de aprendizaje.
+        </p>
+        <span class="coming">Próxima implementación</span>
+      </article>
+
+    </section>
+
+
+    <footer>
+      <strong>© SIP - SYSTEM INTELLIGENCE PLATFORM 2026</strong><br>
+      Asistente Pedagógico Curricular y Evaluador Inteligente para docentes universitarios y escolares.
+    </footer>
+
+  </main>
+
+</div>
+
+
+<script>
+
+  function notify(message) {
+    alert(message);
+  }
+
+  function selectModule(module, element) {
+
+    document.querySelectorAll(".nav button")
+      .forEach(button => button.classList.remove("active"));
+
+    element.classList.add("active");
+
+    const titles = {
+      dashboard: "Panel pedagógico",
+      cursos: "Gestión de cursos",
+      curriculo: "Matriz curricular",
+      materiales: "Material fuente",
+      analisis: "Análisis pedagógico",
+      preguntas: "Banco de preguntas",
+      examenes: "Gestión de exámenes",
+      alumnos: "Gestión de alumnos",
+      resultados: "Resultados académicos",
+      innovacion: "Innovación didáctica"
+    };
+
+    const title = document.querySelector(".topbar h2");
+
+    if (title && titles[module]) {
+      title.textContent = titles[module];
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+</script>
+
+</body>
+</html>
